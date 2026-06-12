@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSHOP — Promos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#FFFFFF; --black:#111111; --orange:#FA5400;
+    --gray:#F5F5F5; --gray-2:#E5E5E5; --gray-text:#707072;
+    --display:'Archivo Black', sans-serif; --body:'Inter', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  button{font-family:var(--body)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+  ::selection{background:var(--orange);color:var(--white)}
+
+  .topbar{background:var(--gray);font-size:.75rem;display:flex;justify-content:flex-end;gap:1.2rem;padding:.5rem 3rem}
+  .topbar a:hover{color:var(--gray-text)}
+  .topbar span{color:var(--gray-2)}
+
+  .nav{position:sticky;top:0;z-index:100;background:var(--white);display:flex;align-items:center;height:64px;padding:0 3rem;box-shadow:0 1px 0 var(--gray-2)}
+  .nav__logo{font-family:var(--display);font-size:1.5rem;letter-spacing:-.02em;display:flex;align-items:center;height:100%}
+  .nav__logo b{color:var(--orange)}
+  .nav nav{flex:1;display:flex;justify-content:center;height:100%}
+  .nav__links{display:flex;align-items:stretch;list-style:none;gap:.2rem;height:100%}
+  .nav__links li{display:flex}
+  .nav__links a{display:flex;align-items:center;padding:0 1rem;font-weight:500;font-size:.95rem;border-bottom:2px solid transparent;transition:border-color .15s}
+  .nav__links a:hover{border-color:var(--black)}
+  .nav__links a.active{border-color:var(--black);font-weight:600}
+  .nav__more{position:relative;display:flex;align-items:center}
+  .nav__more-btn{background:none;border:none;cursor:pointer;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;color:var(--black);transition:background .15s;line-height:1}
+  .nav__more-btn:hover{background:var(--gray)}
+  .nav__menu{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);background:var(--white);border-radius:14px;min-width:230px;box-shadow:0 8px 30px rgba(0,0,0,.14);padding:.6rem;opacity:0;visibility:hidden;transition:opacity .18s,transform .18s,visibility .18s;list-style:none}
+  .nav__menu.open{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+  .nav__menu li a{display:flex;align-items:center;justify-content:space-between;padding:.65rem .9rem;border-radius:10px;font-size:.9rem;font-weight:500;border-bottom:none;transition:background .12s}
+  .nav__menu li a:hover{background:var(--gray)}
+  .nav__menu li a span{color:var(--gray-text);font-size:.8rem}
+  .nav__menu .sep{height:1px;background:var(--gray-2);margin:.4rem .5rem}
+  .nav__right{display:flex;align-items:center;gap:.8rem}
+  .nav__search{display:flex;align-items:center;gap:.5rem;background:var(--gray);border-radius:100px;padding:.55rem 1rem;border:none;cursor:pointer;font-size:.85rem;color:var(--gray-text);transition:background .15s}
+  .nav__search:hover{background:var(--gray-2)}
+  .nav__icon{background:none;border:none;cursor:pointer;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;transition:background .15s;position:relative}
+  .nav__icon:hover{background:var(--gray)}
+  .nav__icon svg{width:22px;height:22px;stroke:var(--black);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .nav__badge{position:absolute;top:2px;right:0;background:var(--orange);color:var(--white);font-size:.62rem;font-weight:700;border-radius:50%;width:16px;height:16px;display:grid;place-items:center}
+
+  /* fil d'ariane */
+  .crumbs{padding:1.2rem 3rem 0;font-size:.82rem;color:var(--gray-text)}
+  .crumbs a:hover{color:var(--black);text-decoration:underline}
+  .crumbs b{color:var(--black);font-weight:600}
+
+  /* entête de page */
+  .phero{margin:1.2rem 3rem 0;border-radius:18px;color:var(--white);padding:3.2rem 3rem;position:relative;overflow:hidden}
+  .phero--orange{background:linear-gradient(120deg,var(--orange),#FF8A3D)}
+  .phero--black{background:linear-gradient(120deg,#111,#333)}
+  .phero--gray{background:linear-gradient(120deg,#cfcfcf,#9d9d9d);color:var(--black)}
+  .phero--promo{background:repeating-linear-gradient(-45deg,var(--orange) 0 60px,#e24c00 60px 120px)}
+  .phero h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.6rem);text-transform:uppercase;line-height:1.02}
+  .phero p{margin-top:.8rem;max-width:34rem;line-height:1.55;opacity:.92}
+  .phero .count{position:absolute;top:1.4rem;right:1.6rem;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.18);padding:.4rem .85rem;border-radius:100px;backdrop-filter:blur(4px)}
+  .phero--gray .count{background:rgba(0,0,0,.1)}
+
+  /* filtres */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:1.6rem 3rem .4rem}
+  .chips{display:flex;gap:.6rem;flex-wrap:wrap}
+  .chip{border:1.5px solid var(--gray-2);background:var(--white);border-radius:100px;padding:.5rem 1.1rem;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .15s}
+  .chip:hover{border-color:var(--black)}
+  .chip.active{background:var(--black);color:var(--white);border-color:var(--black)}
+  .sort{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--gray-text)}
+  .sort select{border:1.5px solid var(--gray-2);border-radius:100px;padding:.45rem .9rem;font-family:var(--body);font-size:.85rem;background:var(--white);cursor:pointer}
+
+  /* grille produits */
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem 1rem;padding:1.4rem 3rem 3.5rem}
+  .product{display:flex;flex-direction:column}
+  .product__img{background:var(--gray);border-radius:12px;aspect-ratio:1/1;display:grid;place-items:center;position:relative;overflow:hidden;margin-bottom:.9rem}
+  .product__img svg{width:68%;height:68%;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+  .product:hover .product__img svg{transform:scale(1.08) rotate(-3deg)}
+  .product__img .stroke{stroke:var(--black);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .product__img .accent{fill:var(--orange);stroke:none}
+  .pill{position:absolute;top:.9rem;left:.9rem;background:var(--white);font-size:.72rem;font-weight:600;padding:.35rem .7rem;border-radius:100px}
+  .pill--orange{background:var(--orange);color:var(--white)}
+  .product h3{font-size:.95rem;font-weight:600}
+  .product__meta{font-size:.83rem;color:var(--gray-text);margin:.15rem 0 .4rem}
+  .product__price{font-weight:600;font-size:.95rem;margin-bottom:.8rem}
+  .product__price s{color:var(--gray-text);font-weight:400;margin-left:.5rem}
+  .btn-add{margin-top:auto;border:1.5px solid var(--gray-2);background:var(--white);border-radius:100px;padding:.65rem 1rem;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+  .btn-add:hover{border-color:var(--black)}
+  .btn-add.added{background:var(--orange);border-color:var(--orange);color:var(--white)}
+
+  footer{background:var(--white);border-top:1px solid var(--gray-2);padding:3rem 3rem 2rem}
+  .foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2.5rem}
+  .foot h4{font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  .foot ul{list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.88rem;color:var(--gray-text)}
+  .foot ul a:hover{color:var(--black)}
+  .foot__logo{font-family:var(--display);font-size:1.6rem;margin-bottom:.8rem}
+  .foot__logo b{color:var(--orange)}
+  .foot__brand p{color:var(--gray-text);font-size:.88rem;line-height:1.6;max-width:24rem}
+  .foot__bottom{border-top:1px solid var(--gray-2);padding-top:1.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem;font-size:.78rem;color:var(--gray-text)}
+
+  @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+  @media (max-width:1100px){.pgrid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:900px){
+    .topbar,.nav,.crumbs,.toolbar,footer{padding-left:1.2rem;padding-right:1.2rem}
+    .phero{margin:1rem 1.2rem 0;padding:2.4rem 1.6rem}
+    .pgrid{grid-template-columns:repeat(2,1fr);padding:1.4rem 1.2rem 3rem}
+    .nav__links{display:none}
+    .nav__search span{display:none}
+    .nav__search{padding:.55rem}
+    .foot{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:520px){.pgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#">Aide</a><span>|</span>
+  <a href="#">Suivre ma commande</a><span>|</span>
+  <a href="#">Se connecter</a>
+</div>
+
+<header class="nav">
+  <a class="nav__logo" href="rshop-v2.html">RSHOP<b>.</b></a>
+  <nav aria-label="Navigation principale">
+    <ul class="nav__links">
+      <li><a href="rshop-v2.html#nouveautes">Nouveautés</a></li>
+      <li><a href="sneakers.html">Sneakers</a></li>
+      <li><a href="maillots.html">Maillots</a></li>
+      <li><a href="accessoires.html">Accessoires</a></li>
+      <li><a href="promos.html" class="active" style="color:var(--orange);font-weight:600">Promos</a></li>
+      <li class="nav__more">
+        <button class="nav__more-btn" id="moreBtn" aria-label="Parcourir plus" aria-expanded="false" aria-haspopup="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <ul class="nav__menu" id="moreMenu">
+          <li><a href="rshop-v2.html#nouveautes">Drop de la semaine <span>Nouveau</span></a></li>
+          <li><a href="rshop-v2.html#categories">Tous les rayons</a></li>
+          <li><a href="#">Guide des tailles</a></li>
+          <li><a href="#">Authenticité</a></li>
+          <li class="sep" aria-hidden="true"></li>
+          <li><a href="#">Suivre ma commande</a></li>
+          <li><a href="#">Aide & contact</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div class="nav__right">
+    <button class="nav__search" aria-label="Rechercher">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#707072" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <span>Rechercher</span>
+    </button>
+    <button class="nav__icon" aria-label="Favoris">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.6-9.2-9A5.2 5.2 0 0 1 12 6.5 5.2 5.2 0 0 1 21.2 11C19 15.4 12 20 12 20z"/></svg>
+    </button>
+    <button class="nav__icon" aria-label="Panier">
+      <svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+      <span class="nav__badge" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="crumbs"><a href="rshop-v2.html">Accueil</a> / <b>Promotions</b></div>
+
+<section class="phero phero--promo">
+  <span class="count">8 articles</span>
+  <h1>Promos<br>Jusqu'à -33 % sur la sélection.</h1>
+  <p>Fins de série et dernières tailles à prix réduit. Les pièces partent vite et ne reviennent pas.</p>
+</section>
+
+<div class="toolbar">
+  <div class="chips">
+      <button class="chip active">Tout</button>
+      <button class="chip">Sneakers</button>
+      <button class="chip">Maillots</button>
+      <button class="chip">Accessoires</button>
+      <button class="chip">-30 % et plus</button>
+  </div>
+  <label class="sort">Trier par
+    <select aria-label="Trier les produits">
+      <option>Pertinence</option>
+      <option>Prix croissant</option>
+      <option>Prix décroissant</option>
+      <option>Nouveautés</option>
+    </select>
+  </label>
+</div>
+
+<main class="pgrid">
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-20 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M72 18l18 9 18-9 24 18-13 18-9-6v62H70V48l-9 6-13-18z"/>
+  <path class="stroke" d="M81 18c0 6 18 6 18 0"/><path class="stroke" d="M70 56h60M70 88h60"/>
+</svg>
+      </div>
+      <h3>Maillot rétro 1998 — réédition</h3>
+      <div class="product__meta">Édition limitée · S à XL</div>
+      <div class="product__price">79,00 € <s>99,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-20 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M18 92c0-9 7-21 20-24l26-16c5 10 16 13 24 10l14 14c21 3 42 9 52 20v10H18z"/>
+  <path class="stroke" d="M18 104h136"/>
+  <path class="stroke" d="M62 54l7 7M76 46l7 7"/>
+</svg>
+      </div>
+      <h3>RS Court basse blanche</h3>
+      <div class="product__meta">Cuir · 36 à 46</div>
+      <div class="product__price">95,00 € <s>119,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-30 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M55 76c0-25 20-42 45-42s45 17 45 42"/>
+  <path class="stroke" d="M55 76h90"/>
+  <path class="stroke" d="M55 76c-12 0-20 6-20 11h64"/>
+  <path class="stroke" d="M100 34v42"/>
+</svg>
+      </div>
+      <h3>Casquette trucker mesh</h3>
+      <div class="product__meta">Dos filet · taille unique</div>
+      <div class="product__price">20,00 € <s>29,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-33 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M72 18l18 9 18-9 24 18-13 18-9-6v62H70V48l-9 6-13-18z"/>
+  <path class="stroke" d="M81 18c0 6 18 6 18 0"/>
+</svg>
+      </div>
+      <h3>Maillot extérieur 24/25</h3>
+      <div class="product__meta">Fin de saison · S à XXL</div>
+      <div class="product__price">49,90 € <s>74,90 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-20 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M18 92c0-9 7-21 20-24l26-16c5 10 16 13 24 10l14 14c21 3 42 9 52 20v10H18z"/>
+  <path class="stroke" d="M18 104h136"/>
+  <path class="stroke" d="M62 54l7 7M76 46l7 7"/>
+</svg>
+      </div>
+      <h3>RS Runner « Nuit »</h3>
+      <div class="product__meta">Réfléchissante · 39 à 47</div>
+      <div class="product__price">135,00 € <s>169,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-30 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M55 76c0-25 20-42 45-42s45 17 45 42"/>
+  <path class="stroke" d="M55 76h90"/>
+  <path class="stroke" d="M55 76c-12 0-20 6-20 11h64"/>
+  <path class="stroke" d="M100 34v42"/>
+</svg>
+      </div>
+      <h3>Bob RS été</h3>
+      <div class="product__meta">Coton léger · S/M et L/XL</div>
+      <div class="product__price">22,00 € <s>32,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-30 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M72 18l18 9 18-9 24 18-13 18-9-6v62H70V48l-9 6-13-18z"/>
+  <path class="stroke" d="M81 18c0 6 18 6 18 0"/><circle class="accent" cx="99" cy="64" r="8"/>
+</svg>
+      </div>
+      <h3>Maillot training pro</h3>
+      <div class="product__meta">Tissu respirant · S à XXL</div>
+      <div class="product__price">34,90 € <s>49,90 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+
+    <article class="product">
+      <div class="product__img">
+        <span class="pill pill--orange">-30 %</span>
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+  <path class="stroke" d="M18 92c0-9 7-21 20-24l26-16c5 10 16 13 24 10l14 14c21 3 42 9 52 20v10H18z"/>
+  <path class="stroke" d="M18 104h136"/>
+  <path class="stroke" d="M62 54l7 7M76 46l7 7"/>
+</svg>
+      </div>
+      <h3>RS Slip-on toile noire</h3>
+      <div class="product__meta">Sans lacets · 36 à 45</div>
+      <div class="product__price">62,00 € <s>89,00 €</s></div>
+      <button class="btn-add">Ajouter au panier</button>
+    </article>
+</main>
+
+<footer>
+  <div class="foot">
+    <div class="foot__brand">
+      <div class="foot__logo">RSHOP<b>.</b></div>
+      <p>Revente sélective de sneakers, maillots de foot et accessoires. Pièces vérifiées, expédiées sous 48h depuis la Nouvelle-Aquitaine.</p>
+    </div>
+    <div>
+      <h4>Boutique</h4>
+      <ul>
+        <li><a href="sneakers.html">Sneakers</a></li>
+        <li><a href="maillots.html">Maillots de foot</a></li>
+        <li><a href="accessoires.html">Accessoires</a></li>
+        <li><a href="promos.html">Promotions</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="#">Livraison & retours</a></li>
+        <li><a href="#">Guide des tailles</a></li>
+        <li><a href="#">Paiement sécurisé</a></li>
+        <li><a href="#">Nous contacter</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>RSHOP</h4>
+      <ul>
+        <li><a href="#">Notre histoire</a></li>
+        <li><a href="#">Authenticité</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot__bottom">
+    <span>© 2026 RSHOP — Tous droits réservés</span>
+    <span><a href="#">CGV</a> · <a href="#">Confidentialité</a> · <a href="#">Mentions légales</a></span>
+  </div>
+</footer>
+
+<script>
+  // Menu trois points
+  const moreBtn = document.getElementById('moreBtn');
+  const moreMenu = document.getElementById('moreMenu');
+  moreBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const open = moreMenu.classList.toggle('open');
+    moreBtn.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', e=>{
+    if(!moreMenu.contains(e.target)){ moreMenu.classList.remove('open'); moreBtn.setAttribute('aria-expanded','false'); }
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape'){ moreMenu.classList.remove('open'); moreBtn.setAttribute('aria-expanded','false'); }
+  });
+
+  // Filtres (démo visuelle)
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click', ()=>{
+      document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+
+  // Panier (démo)
+  let count = 0;
+  const cartCount = document.getElementById('cartCount');
+  document.querySelectorAll('.btn-add').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      count++;
+      cartCount.textContent = count;
+      btn.textContent = 'Ajouté ✓';
+      btn.classList.add('added');
+      setTimeout(()=>{ btn.textContent = 'Ajouter au panier'; btn.classList.remove('added'); }, 1300);
+    });
+  });
+</script>
+</body>
+</html>
